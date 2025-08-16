@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "WoeUSB-ng"
+version = "0.2.12"
+description = "WoeUSB-ng is a simple tool that enable you to create your own usb stick windows installer from an iso image or a real DVD. This is a rewrite of original WoeUSB."
+readme = "README.md"
+requires-python = ">=3.6"
+license = { text = "GPL-3" }
+authors = [
+  { name = "Jakub Szymański", email = "jakubmateusz@poczta.onet.pl" }
+]
+urls = { Homepage = "https://github.com/WoeUSB/WoeUSB-ng" }
+dependencies = [
+  "termcolor",
+  "wxPython"
+]
+
+[tool.setuptools]
+packages = ["WoeUSB"]
+include-package-data = true
+
+[project.scripts]
+woeusb = "WoeUSB.woeusb"
