@@ -29,3 +29,5 @@ python -c "import _bz2; print('_bz2 module imported successfully')"
 ```
 
 4. python clears build dir by default, `pip install -e . --no-clean` keeps it
+
+5. can use `pkg-config <lib-name> --libs` - for example `pkg-config gtk+-3.0 --libs` - to get the libs. To put them in the LD_LIBRARY_PATH need to transform them tho: `pkg-config gtk+-3.0 --libs | tr ' ' '\n' | grep '^-L' | sed 's/^-L//' | paste -sd: -`
