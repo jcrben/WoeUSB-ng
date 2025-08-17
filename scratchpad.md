@@ -13,12 +13,13 @@ export PATH="/home/linuxbrew/.linuxbrew/Cellar/binutils/2.45/bin:$PATH"
 export PATH="/home/linuxbrew/.linuxbrew/Cellar/binutils/2.45/x86_64-pc-linux-gnu/bin:$PATH"
 ln -s /home/linuxbrew/.linuxbrew/bin/gcc-13 /home/linuxbrew/.linuxbrew/bin/gcc
 
-# either export path
-export PATH=/home/linuxbrew/.linuxbrew/Cellar/binutils/2.45/bin:"$PATH"
+# either export path - DOES NOT WORK
+# ~~export PATH=/home/linuxbrew/.linuxbrew/Cellar/binutils/2.45/bin:"$PATH"~~
 # OR link:
 ln -s /home/linuxbrew/.linuxbrew/Cellar/binutils/2.45/bin/ld /home/linuxbrew/.linuxbrew/bin/ld
 ln -s /home/linuxbrew/.linuxbrew/Cellar/binutils/2.45/bin/ar /home/linuxbrew/.linuxbrew/bin/ar
 # ...need more
+cd /home/linuxbrew/.linuxbrew/bin && for tool in addr2line ar as c++filt coffdump dlltool dllwrap elfedit gprof gprofng gprofng-archive gprofng-collect-app gprofng-display-html gprofng-display-src gprofng-display-text ld ld.bfd nm objcopy objdump ranlib readelf size srconv strings strip sysdump windmc windres; do ln -sf /home/linuxbrew/.linuxbrew/Cellar/binutils/2.45/bin/$tool $tool; done
 ```
 
 2. don't mix system and homebrew dependencies
