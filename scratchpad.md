@@ -2,8 +2,19 @@ python -c "import bz2; print(bz2.__doc__)"
 
 python -c "import sys; print('hello')"
 
-## lessons learned
+## tldr
+`pip install --only-binary=all --no-cache-dir --force-reinstall wxPython`
 
+
+## brew deps
+
+```bash
+brew install binutils
+brew install bzip2
+brew install krb5 libx11 libxext libxrender libxrandr libxfixes libxcursor libxinerama libxi bzip2 openssl@3 curl
+```
+
+## lessons learned
 
 1. brew install coreutils and maybe gcc does not get installed into homebrew bin; 
 
@@ -38,5 +49,8 @@ python -c "import _bz2; print('_bz2 module imported successfully')"
 4. python clears build dir by default, `pip install -e . --no-clean` keeps it
 
 5. can use `pkg-config <lib-name> --libs` - for example `pkg-config gtk+-3.0 --libs` - to get the libs. To put them in the LD_LIBRARY_PATH need to transform them tho: `pkg-config gtk+-3.0 --libs | tr ' ' '\n' | grep '^-L' | sed 's/^-L//' | paste -sd: -`
+
+something like:
+`export LD_LIBRARY_PATH="$(pkg-config gtk+-3.0 --libs | tr ' ' '\n' | grep '^-L' | sed 's/^-L//' | paste -sd: -):$LD_LIBRARY_PATH"`
 
 6. wxPython has a bunch of prebuilt wheels at https://extras.wxpython.org/wxPython4/extras/linux/gtk3/
