@@ -7,6 +7,7 @@ WoeUSB/core.py
 WoeUSB/gui.py
 WoeUSB/list_devices.py
 WoeUSB/miscellaneous.py
+WoeUSB/tkinter_gui.py
 WoeUSB/utils.py
 WoeUSB/woeusb
 WoeUSB/woeusbgui

@@ -9,7 +9,6 @@ License: GPL-3
 Description-Content-Type: text/markdown
 License-File: COPYING
 Requires-Dist: termcolor
-Requires-Dist: wxPython
 Dynamic: author
 Dynamic: author-email
 Dynamic: description
