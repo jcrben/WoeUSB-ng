@@ -4,6 +4,14 @@ import os
 import time
 import threading
 
+# Patch wxPython to avoid native GTK dialogs
+try:
+    import sys
+    sys.path.insert(0, '/var/home/ben/code/WoeUSB-ng')
+    import wx_patch
+except:
+    pass
+
 import wx
 import wx.adv
 

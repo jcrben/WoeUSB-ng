@@ -27,15 +27,17 @@ import sys
 import os
 
 def main():
+    # print('running main2')
     if os.getuid() != 0:
         subprocess.run(["pkexec", os.path.realpath(__file__)])
     else:
         try:
             import WoeUSB.gui
+            print('about to run')
             WoeUSB.gui.run()
         except SystemExit:
             import WoeUSB.utils
+            print('sudo access requested')
 
             WoeUSB.utils.update_policy_to_allow_for_running_gui_as_root(__file__)
             print("Policy was updated, please run this program again")
-
