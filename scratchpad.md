@@ -2,6 +2,23 @@ python -c "import bz2; print(bz2.__doc__)"
 
 python -c "import sys; print('hello')"
 
+## tkinter support
+`brew install python-tk@3.13`
+OR
+https://github.com/jdx/mise/issues/2189#issuecomment-2212359376
+
+see also: https://github.com/pyenv/pyenv/issues/3116#issuecomment-2511938813
+
+```
+brew install tcl-tk@8
+export TCL_LIBRARY=$(brew --prefix tcl-tk)/lib; export TK_LIBRARY=$(brew --prefix tcl-tk)/lib
+mise uninstall python@3.12.3
+mise install python@3.12.3
+# open a new shell to get rid of environment variables and run:
+python -m tkinter
+# which should open the Tcl/Tk test window
+```
+
 ## tldr
 `pip install --only-binary=all --no-cache-dir --force-reinstall wxPython`
 
