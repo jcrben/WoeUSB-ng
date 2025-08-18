@@ -12,6 +12,20 @@ os.environ['WX_USE_GENERIC_CONTROLS'] = '1'
 os.environ['WX_DISABLE_NATIVE_DIALOGS'] = '1'
 os.environ['GDK_BACKEND'] = 'x11'
 
+# Suppress GTK warnings and critical messages
+os.environ['G_MESSAGES_DEBUG'] = ''
+os.environ['GTK_DEBUG'] = ''
+# Redirect GTK warnings to /dev/null
+import subprocess
+import sys
+try:
+    # Try to redirect stderr for GTK messages, but keep Python errors
+    subprocess.run(['exec', '2>/dev/null'], shell=True, check=False)
+except:
+    pass
+os.environ['WX_DISABLE_NATIVE_DIALOGS'] = '1'
+os.environ['GDK_BACKEND'] = 'x11'
+
 # Enhanced FilePickerCtrl replacement that maintains API compatibility
 class SimpleFilePickerCtrl(wx.Panel):
     def __init__(self, parent, id=-1, path="", message="Choose a file", 
@@ -45,14 +59,17 @@ class SimpleFilePickerCtrl(wx.Panel):
         try:
             import subprocess
             print("DEBUG: Trying kdialog...")
+            # Use a simpler kdialog command that's more likely to work in sudo environment
             result = subprocess.run([
                 'kdialog', '--getopenfilename', 
-                '.', 'ISO files (*.iso)|*.iso All files (*)|*'
+                os.path.expanduser('~'), '*.iso'
             ], capture_output=True, text=True, timeout=30)
             print(f"DEBUG: kdialog returned code {result.returncode}")
             if result.stderr:
                 print(f"DEBUG: kdialog stderr: {result.stderr}")
-            if result.returncode == 0:
+            if result.stdout:
+                print(f"DEBUG: kdialog stdout: {result.stdout}")
+            if result.returncode == 0 and result.stdout.strip():
                 selected_path = result.stdout.strip()
                 print(f"DEBUG: kdialog selected: {selected_path}")
         except Exception as e:
@@ -69,7 +86,7 @@ class SimpleFilePickerCtrl(wx.Panel):
                     '--file-filter=ISO files (*.iso) | *.iso',
                     '--file-filter=All files | *'
                 ], capture_output=True, text=True, timeout=30)
-                if result.returncode == 0:
+                if result.returncode == 0 and result.stdout.strip():
                     selected_path = result.stdout.strip()
                     print(f"DEBUG: zenity selected: {selected_path}")
             except Exception as e:
@@ -125,7 +142,10 @@ class SimpleFilePickerCtrl(wx.Panel):
         
         # Update the path if we got something
         if selected_path:
+            print(f"DEBUG: Final selected path: {selected_path}")
             self.SetPath(selected_path)
+        else:
+            print("DEBUG: No path selected")
         
     def GetPath(self):
         return self.path
@@ -139,7 +159,9 @@ class SimpleFilePickerCtrl(wx.Panel):
             self.text_ctrl.SetValue(path)
             
     def SetValue(self, value):
-        self.SetPath(value)
+        self.path = value
+        if hasattr(self, 'text_ctrl'):
+            self.text_ctrl.SetValue(value)
     
     def OnBrowse(self, event):
         print("DEBUG: Browse button clicked!")
@@ -186,10 +208,12 @@ class SimpleFilePickerCtrl(wx.Panel):
                         # Recursive call to try again
                         self.OnBrowse(event)    # Compatibility methods to maintain API compliance
     def GetPath(self):
-        return self.GetValue()
+        return self.path
     
     def SetPath(self, path):
-        self.SetValue(path)
+        self.path = path
+        if hasattr(self, 'text_ctrl'):
+            self.text_ctrl.SetValue(path)
 
 # Completely disable wx.FileDialog to prevent segfaults
 class SafeFileDialog:
