@@ -1,0 +1,14 @@
+certifi==2025.8.3
+charset-normalizer==3.4.3
+idna==3.10
+invoke==2.2.0
+pipx==1.7.1
+platformdirs==4.3.7
+requests==2.32.4
+setuptools==80.9.0
+termcolor==3.1.0
+urllib3==2.5.0
+userpath==1.9.2
+wheel==0.45.1
+-e git+ssh://git@github.com/jcrben/WoeUSB-ng.git@1326bbb58b7cb20e5fde64b1b28806535aa8332d#egg=WoeUSBng
+wxPython==4.2.3
