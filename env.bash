@@ -1,3 +1,8 @@
+# TCL/TK support for tkinter
+export TCL_LIBRARY="$(brew --prefix tcl-tk@8)/lib"
+export TK_LIBRARY="$(brew --prefix tcl-tk@8)/lib"
+export PATH="$(brew --prefix tcl-tk@8)/bin:$PATH"
+
 export AR=/home/linuxbrew/.linuxbrew/bin/ar
 export CC=/home/linuxbrew/.linuxbrew/bin/gcc-13
 export CFLAGS=
