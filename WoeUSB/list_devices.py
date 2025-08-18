@@ -16,7 +16,7 @@ def usb_drive(show_all=False):
     devices = re.sub("sr[0-9]|cdrom[0-9]", "", lsblk).split()
 
     for device in devices:
-        if is_removable_and_writable_device(device):
+        if not is_removable_and_writable_device(device):
             if not show_all:
                 continue
 
@@ -55,11 +55,11 @@ def is_removable_and_writable_device(block_device_name):
             ro_content = ro.read()
 
         if removable_content.strip("\n") == "1" and ro_content.strip("\n") == "0":
-            return 0
+            return True  # Device is removable and writable
         else:
-            return 1
+            return False  # Device is not removable or not writable
     else:
-        return 1
+        return False  # No removable file means not removable
 
 
 def dvd_drive():

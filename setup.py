@@ -47,7 +47,7 @@ class PostInstallCommand(install):
 
 
 setup(
-    name='WoeUSB-ng',
+    name='WoeUSBng',
     version='0.2.12',
     description='WoeUSB-ng is a simple tool that enable you to create your own usb stick windows installer from an iso image or a real DVD. This is a rewrite of original WoeUSB. ',
     long_description=long_description,
@@ -59,6 +59,11 @@ setup(
     zip_safe=False,
     packages=['WoeUSB'],
     include_package_data=True,
+    entry_points={
+        'gui_scripts': [
+            'woeusbgui = WoeUSB.woeusbgui:main',
+        ],
+    },
     scripts=[
         'WoeUSB/woeusb',
     ],
@@ -71,3 +76,5 @@ setup(
         'install': PostInstallCommand
     }
 )
+
+

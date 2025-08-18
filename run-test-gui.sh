@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Load our environment
+source env.bash
+
+# Add all additional environment variables to prevent segfaults
+export GTK_A11Y=none
+export GTK_DEBUG=""
+export WX_USE_GENERIC_CONTROLS=1
+export WX_DISABLE_NATIVE_DIALOGS=1
+export GDK_BACKEND=x11
+
+# Make sure Python can find wxPython
+export PYTHONPATH=/home/ben/dotfiles/local/xdgdata/mise/installs/python/3.13.7/lib/python3.13/site-packages:$PYTHONPATH
+
+echo "Starting WoeUSB-ng GUI with segfault fixes..."
+
+# Run with proper environment
+exec sudo \
+    AR="$AR" \
+    CC="$CC" \
+    CXX="$CXX" \
+    CFLAGS="$CFLAGS" \
+    CPPFLAGS="$CPPFLAGS" \
+    LDFLAGS="$LDFLAGS" \
+    LD="$LD" \
+    RANLIB="$RANLIB" \
+    C_INCLUDE_PATH="$C_INCLUDE_PATH" \
+    CPLUS_INCLUDE_PATH="$CPLUS_INCLUDE_PATH" \
+    LIBRARY_PATH="$LIBRARY_PATH" \
+    LD_LIBRARY_PATH="$LD_LIBRARY_PATH" \
+    PKG_CONFIG_PATH="$PKG_CONFIG_PATH" \
+    PYTHONPATH="$PYTHONPATH" \
+    PATH="$PATH" \
+    GTK_DATA_PREFIX="$GTK_DATA_PREFIX" \
+    GTK_EXE_PREFIX="$GTK_EXE_PREFIX" \
+    GTK_PATH="$GTK_PATH" \
+    GTK_THEME="$GTK_THEME" \
+    WXGTK_FORCE_LIGHT_THEME="$WXGTK_FORCE_LIGHT_THEME" \
+    WX_USE_NATIVE_THEME="$WX_USE_NATIVE_THEME" \
+    GTK2_RC_FILES="$GTK2_RC_FILES" \
+    GDK_THEME="$GDK_THEME" \
+    GTK_USE_PORTAL="$GTK_USE_PORTAL" \
+    NO_AT_BRIDGE="$NO_AT_BRIDGE" \
+    GI_TYPELIB_PATH="$GI_TYPELIB_PATH" \
+    XDG_DATA_DIRS="$XDG_DATA_DIRS" \
+    GSETTINGS_SCHEMA_DIR="$GSETTINGS_SCHEMA_DIR" \
+    WXSUPPRESS_SIZER_FLAGS_CHECK="$WXSUPPRESS_SIZER_FLAGS_CHECK" \
+    XDG_CACHE_HOME="$XDG_CACHE_HOME" \
+    GTK_IM_MODULE_FILE="$GTK_IM_MODULE_FILE" \
+    GTK_CSD="$GTK_CSD" \
+    WX_USE_GENERIC_FILEDIALOG="$WX_USE_GENERIC_FILEDIALOG" \
+    GTK_OVERLAY_SCROLLING="$GTK_OVERLAY_SCROLLING" \
+    GTK_MODULES="$GTK_MODULES" \
+    GDK_SCALE="$GDK_SCALE" \
+    GDK_DPI_SCALE="$GDK_DPI_SCALE" \
+    QT_SCALE_FACTOR="$QT_SCALE_FACTOR" \
+    GTK_A11Y="$GTK_A11Y" \
+    GTK_DEBUG="$GTK_DEBUG" \
+    WX_USE_GENERIC_CONTROLS="$WX_USE_GENERIC_CONTROLS" \
+    WX_DISABLE_NATIVE_DIALOGS="$WX_DISABLE_NATIVE_DIALOGS" \
+    GDK_BACKEND="$GDK_BACKEND" \
+    /home/ben/dotfiles/local/xdgdata/mise/installs/python/3.13.7/bin/python3 test-gui.py

@@ -1,0 +1,26 @@
+#!/bin/bash
+# WoeUSB-ng launcher script with proper environment setup
+
+# Source the environment
+source /var/home/ben/code/WoeUSB-ng/env.bash
+
+# Launch with all necessary environment variables
+sudo env \
+  LD_LIBRARY_PATH="$LD_LIBRARY_PATH" \
+  GTK_DATA_PREFIX="$GTK_DATA_PREFIX" \
+  GTK_EXE_PREFIX="$GTK_EXE_PREFIX" \
+  GTK_PATH="$GTK_PATH" \
+  GTK_THEME="$GTK_THEME" \
+  GI_TYPELIB_PATH="$GI_TYPELIB_PATH" \
+  XDG_DATA_DIRS="$XDG_DATA_DIRS" \
+  GSETTINGS_SCHEMA_DIR="$GSETTINGS_SCHEMA_DIR" \
+  GTK_CSD="$GTK_CSD" \
+  GTK_USE_PORTAL="$GTK_USE_PORTAL" \
+  NO_AT_BRIDGE="$NO_AT_BRIDGE" \
+  WX_USE_GENERIC_FILEDIALOG="$WX_USE_GENERIC_FILEDIALOG" \
+  GTK_OVERLAY_SCROLLING="$GTK_OVERLAY_SCROLLING" \
+  GTK_MODULES="$GTK_MODULES" \
+  XDG_CACHE_HOME="$XDG_CACHE_HOME" \
+  GTK_IM_MODULE_FILE="$GTK_IM_MODULE_FILE" \
+  WXSUPPRESS_SIZER_FLAGS_CHECK="$WXSUPPRESS_SIZER_FLAGS_CHECK" \
+  $(which woeusbgui)
