@@ -23,4 +23,6 @@ sudo env \
   XDG_CACHE_HOME="$XDG_CACHE_HOME" \
   GTK_IM_MODULE_FILE="$GTK_IM_MODULE_FILE" \
   WXSUPPRESS_SIZER_FLAGS_CHECK="$WXSUPPRESS_SIZER_FLAGS_CHECK" \
-  $(which woeusbgui)
+  G_MESSAGES_DEBUG="" \
+  GTK_DEBUG="" \
+  $(which woeusbgui) 2>/dev/null
