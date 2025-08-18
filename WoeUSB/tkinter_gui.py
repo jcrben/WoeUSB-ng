@@ -16,6 +16,7 @@ except ImportError:
 class WoeUSBtkinter(tk.Tk):
     def __init__(self):
         super().__init__()
+        print("initializing")
         self.title("WoeUSB-ng (Tkinter)")
         
         # DPI/font scaling from env (fallbacks if unset)
@@ -24,6 +25,7 @@ class WoeUSBtkinter(tk.Tk):
         except ValueError:
             scale = 2.0
         self.tk.call('tk', 'scaling', scale)
+        self._scale = scale
 
         # Window size roughly scaled with DPI
         base_w, base_h = 700, 550
@@ -33,7 +35,7 @@ class WoeUSBtkinter(tk.Tk):
         try:
             default_size = int(os.environ.get("WOEUSB_TK_FONT_SIZE", "14"))
         except ValueError:
-            default_size = 50
+            default_size = 14
         for fname in ("TkDefaultFont", "TkTextFont", "TkMenuFont", "TkHeadingFont", "TkTooltipFont"):
             try:
                 f = font.nametofont(fname)
@@ -61,43 +63,61 @@ class WoeUSBtkinter(tk.Tk):
         if 'clam' in self.style.theme_names():
             self.style.theme_use('clam')
 
+        # Header font we fully control (independent of ttk styles)
+        try:
+            header_px = int(os.environ.get('WOEUSB_HEADER_SIZE', '28'))
+        except ValueError:
+            header_px = 28
+        base_family = font.nametofont('TkDefaultFont').cget('family')
+        # Negative size = pixel size (more predictable on some setups)
+        self.header_font = font.Font(family=base_family, size=-header_px, weight='bold')
+
         self.iso_path = tk.StringVar()
         self.target_device = tk.StringVar()
         self.devices = []
 
         self._create_widgets()
+        self._bind_zoom_keys()
         self.refresh_devices()
+
+    def increase_font(self):
+        '''Make the font 2 points bigger'''
+        print('making font bigger')
+        size = self.customFont['size']
+        self.customFont.configure(size=size+2)
+
+    def decrease_font(self):
+        '''Make the font 2 points smaller'''
+        size = self.customFont['size']
+        self.customFont.configure(size=size-2)
 
     def _create_widgets(self):
         main_frame = ttk.Frame(self, padding="10")
         main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Create buttonframe as a child of main_frame
+        buttonframe = tk.Frame(main_frame)
+        self.customFont = tk.font.Font(family="Helvetica", size=50)
+        label = tk.Label(main_frame, text="Hello, world", font=self.customFont)
+        text = tk.Text(main_frame, width=20, height=2, font=self.customFont)
 
-        # Get the default background color from the ttk theme for our manual labels
-        try:
-            bg_color = self.style.lookup('TFrame', 'background')
-        except tk.TclError:
-            try:
-                bg_color = self.style.lookup('.', 'background')
-            except tk.TclError:
-                bg_color = self.cget('bg')
+        buttonframe.pack(side="top", fill="x")
+        label.pack(side="top", fill="x")
+        text.pack(side="top", fill="both", expand=True)
+        text.insert("end","press +/- buttons to change\nfont size")
 
-        # Create a new NAMED font with a size in PIXELS (negative value).
-        # This can bypass theme/DPI scaling issues that ignore point sizes.
-        try:
-            _base_family = font.nametofont('TkDefaultFont').cget('family')
-            # Using a negative size requests a font of a specific pixel height.
-            self.title_font = font.Font(family=_base_family, size=-50, weight='bold')
-        except Exception:
-            # Fallback if font creation fails
-            self.title_font = ('Helvetica', 20, 'bold')
+        increase_font = tk.Button(buttonframe, text="+", command=self.increase_font)
+        decrease_font = tk.Button(buttonframe, text="-", command=self.decrease_font)
+
+        increase_font.pack(side="left")
+        decrease_font.pack(side="left")
+
 
 
         # --- Source ISO ---
+        tk.Label(main_frame, text="Source ISO", font=self.header_font, anchor='w').pack(anchor='w', padx=4)
         source_container = ttk.Frame(main_frame, borderwidth=1, relief="sunken", padding="10")
-        source_container.pack(fill=tk.X, pady=(15, 5))
-        
-        source_title = tk.Label(source_container, text=" Source ISO ", font=self.title_font, background=bg_color)
-        source_title.place(x=10, y=-12)
+        source_container.pack(fill=tk.X, pady=(2, 8))
 
         iso_entry = ttk.Entry(source_container, textvariable=self.iso_path, width=60)
         iso_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5), pady=(10,0))
@@ -106,10 +126,9 @@ class WoeUSBtkinter(tk.Tk):
         browse_button.pack(side=tk.LEFT, pady=(10,0))
 
         # --- Target Device ---
+        tk.Label(main_frame, text="Target Device", font=self.header_font, anchor='w').pack(anchor='w', padx=4)
         target_container = ttk.Frame(main_frame, borderwidth=1, relief="sunken", padding="10")
-        target_container.pack(fill=tk.X, pady=(15, 5))
-        target_title = tk.Label(target_container, text=" Target Device ", font=self.title_font, background=bg_color)
-        target_title.place(x=10, y=-12)
+        target_container.pack(fill=tk.X, pady=(2, 8))
 
         self.device_combobox = ttk.Combobox(target_container, textvariable=self.target_device, state="readonly", width=57)
         self.device_combobox.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5), pady=(10,0))
@@ -126,10 +145,9 @@ class WoeUSBtkinter(tk.Tk):
         self.progress.pack(fill=tk.X, pady=5)
 
         # --- Log ---
+        tk.Label(main_frame, text="Log", font=self.header_font, anchor='w').pack(anchor='w', padx=4)
         log_container = ttk.Frame(main_frame, borderwidth=1, relief="sunken", padding="10")
-        log_container.pack(fill=tk.BOTH, expand=True, pady=(15, 5))
-        log_title = tk.Label(log_container, text=" Log ", font=self.title_font, background=bg_color)
-        log_title.place(x=10, y=-12)
+        log_container.pack(fill=tk.BOTH, expand=True, pady=(2, 8))
 
         self.log_text = tk.Text(log_container, state='disabled', wrap='word', height=10, font=font.nametofont('TkFixedFont'))
         scrollbar = ttk.Scrollbar(log_container, command=self.log_text.yview)
@@ -137,6 +155,33 @@ class WoeUSBtkinter(tk.Tk):
         
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.log_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, pady=(10,0))
+
+    def increase_zoom(self):
+        print('hmm')
+        self._adjust_zoom(0.2)
+        
+    def _bind_zoom_keys(self):
+        print('zooming')
+        # Ctrl+'+' zoom in, Ctrl+'-' zoom out, Ctrl+'0' reset
+        self.bind_all('<Control-plus>', lambda e: self.increase_zoom())
+        self.bind_all('<Control-KP_Add>', lambda e: self._adjust_zoom(0.2))
+        self.bind_all('<Control-minus>', lambda e: self._adjust_zoom(-0.2))
+        self.bind_all('<Control-KP_Subtract>', lambda e: self._adjust_zoom(-0.2))
+        self.bind_all('<Control-0>', lambda e: self._set_zoom(2.0))
+
+    def _set_zoom(self, new_scale: float):
+        self._scale = max(0.6, min(new_scale, 5.0))
+        self.tk.call('tk', 'scaling', self._scale)
+        # Recompute header font in pixels proportional to scale
+        try:
+            base_family = font.nametofont('TkDefaultFont').cget('family')
+            px = int(14 * self._scale * 1.6)  # rough heuristic
+            self.header_font.configure(family=base_family, size=-px, weight='bold')
+        except Exception:
+            pass
+
+    def _adjust_zoom(self, delta: float):
+        self._set_zoom(self._scale + delta)
 
     def browse_iso(self):
         path = filedialog.askopenfilename(
