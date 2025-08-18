@@ -44,19 +44,25 @@ class SimpleFilePickerCtrl(wx.Panel):
         # Method 1: Try kdialog (KDE file dialog)
         try:
             import subprocess
+            print("DEBUG: Trying kdialog...")
             result = subprocess.run([
                 'kdialog', '--getopenfilename', 
                 '.', 'ISO files (*.iso)|*.iso All files (*)|*'
             ], capture_output=True, text=True, timeout=30)
+            print(f"DEBUG: kdialog returned code {result.returncode}")
+            if result.stderr:
+                print(f"DEBUG: kdialog stderr: {result.stderr}")
             if result.returncode == 0:
                 selected_path = result.stdout.strip()
-        except (subprocess.SubprocessError, FileNotFoundError, subprocess.TimeoutExpired):
-            pass
+                print(f"DEBUG: kdialog selected: {selected_path}")
+        except Exception as e:
+            print(f"DEBUG: kdialog failed: {e}")
         
         # Method 2: Try zenity (GNOME file dialog) 
         if not selected_path:
             try:
                 import subprocess
+                print("DEBUG: Trying zenity...")
                 result = subprocess.run([
                     'zenity', '--file-selection', 
                     '--title=Select ISO file',
@@ -65,12 +71,14 @@ class SimpleFilePickerCtrl(wx.Panel):
                 ], capture_output=True, text=True, timeout=30)
                 if result.returncode == 0:
                     selected_path = result.stdout.strip()
-            except (subprocess.SubprocessError, FileNotFoundError, subprocess.TimeoutExpired):
-                pass
+                    print(f"DEBUG: zenity selected: {selected_path}")
+            except Exception as e:
+                print(f"DEBUG: zenity failed: {e}")
         
         # Method 3: Try tkinter file dialog
         if not selected_path:
             try:
+                print("DEBUG: Trying tkinter...")
                 import tkinter as tk
                 from tkinter import filedialog
                 root = tk.Tk()
@@ -80,12 +88,15 @@ class SimpleFilePickerCtrl(wx.Panel):
                     filetypes=[("ISO files", "*.iso"), ("All files", "*.*")]
                 )
                 root.destroy()
-            except Exception:
-                pass
+                if selected_path:
+                    print(f"DEBUG: tkinter selected: {selected_path}")
+            except Exception as e:
+                print(f"DEBUG: tkinter failed: {e}")
         
         # Method 4: Try wxPython generic file dialog (safer than native)
         if not selected_path:
             try:
+                print("DEBUG: Trying wxPython generic dialog...")
                 # Force generic dialog
                 dlg = wx.FileDialog(
                     self, 
@@ -95,18 +106,21 @@ class SimpleFilePickerCtrl(wx.Panel):
                 )
                 if dlg.ShowModal() == wx.ID_OK:
                     selected_path = dlg.GetPath()
+                    print(f"DEBUG: wxPython selected: {selected_path}")
                 dlg.Destroy()
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"DEBUG: wxPython failed: {e}")
         
         # Method 5: Fallback to text entry
         if not selected_path:
+            print("DEBUG: Falling back to text entry...")
             dlg = wx.TextEntryDialog(self, 
                                f"{self.message}\nPlease enter the full path:", 
                                "File Path", 
                                self.path)
             if dlg.ShowModal() == wx.ID_OK:
                 selected_path = dlg.GetValue()
+                print(f"DEBUG: text entry selected: {selected_path}")
             dlg.Destroy()
         
         # Update the path if we got something
