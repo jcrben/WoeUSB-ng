@@ -5,13 +5,18 @@ python -c "import sys; print('hello')"
 ## tldr
 `pip install --only-binary=all --no-cache-dir --force-reinstall wxPython`
 
-
+```bash
+pip install setuptools
+python setup.py develop
+```
 ## brew deps
 
 ```bash
 brew install binutils
 brew install bzip2
+brew install gcc@13
 brew install krb5 libx11 libxext libxrender libxrandr libxfixes libxcursor libxinerama libxi bzip2 openssl@3 curl
+brew install gtk+3 pkg-config
 ```
 
 ## lessons learned
