@@ -61,7 +61,7 @@ setup(
     include_package_data=True,
     entry_points={
         'gui_scripts': [
-            'woeusbgui = WoeUSB.woeusbgui:main',
+            'woeusbgui = WoeUSB.tkinter_gui:main',
         ],
     },
     scripts=[
@@ -69,7 +69,6 @@ setup(
     ],
     install_requires=[
         'termcolor',
-        'wxPython',
     ],
     cmdclass={
         'develop': PostDevelopCommand,

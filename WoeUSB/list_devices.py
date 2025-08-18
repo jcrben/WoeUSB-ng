@@ -43,6 +43,57 @@ def usb_drive(show_all=False):
     return devices_list
 
 
+def get_device_list(show_all=False):
+    """
+    Returns a list of dictionaries, where each dictionary represents a device.
+    e.g. [{'name': 'sda', 'model': 'Cruzer Blade', 'size': '7.5G'}]
+    """
+    devices_info = []
+
+    try:
+        lsblk_proc = subprocess.run(["lsblk",
+                                     "--output", "NAME",
+                                     "--noheadings",
+                                     "--nodeps"], stdout=subprocess.PIPE, check=True, text=True)
+    except (FileNotFoundError, subprocess.CalledProcessError) as e:
+        print(f"Could not run lsblk: {e}")
+        return []
+
+    devices = re.sub("sr[0-9]|cdrom[0-9]", "", lsblk_proc.stdout).split()
+
+    for device_name in devices:
+        if not is_removable_and_writable_device(device_name):
+            if not show_all:
+                continue
+
+        # FIXME: Needs a more reliable detection mechanism instead of simply assuming it is under /dev
+        block_device = "/dev/" + device_name
+
+        try:
+            device_capacity = subprocess.run(["lsblk",
+                                              "--output", "SIZE",
+                                              "--noheadings",
+                                              "--nodeps",
+                                              block_device], stdout=subprocess.PIPE, check=True, text=True).stdout.strip()
+
+            device_model = subprocess.run(["lsblk",
+                                           "--output", "MODEL",
+                                           "--noheadings",
+                                           "--nodeps",
+                                           block_device], stdout=subprocess.PIPE, check=True, text=True).stdout.strip()
+        except (FileNotFoundError, subprocess.CalledProcessError) as e:
+            print(f"Could not get info for {device_name}: {e}")
+            continue
+
+        devices_info.append({
+            "name": device_name,
+            "model": device_model if device_model else "Unknown Model",
+            "size": device_capacity
+        })
+
+    return devices_info
+
+
 def is_removable_and_writable_device(block_device_name):
     sysfs_block_device_dir = "/sys/block/" + block_device_name
 
