@@ -68,9 +68,16 @@ class WoeUSBtkinter(tk.Tk):
             header_px = int(os.environ.get('WOEUSB_HEADER_SIZE', '28'))
         except ValueError:
             header_px = 28
-        base_family = font.nametofont('TkDefaultFont').cget('family')
-        # Negative size = pixel size (more predictable on some setups)
-        self.header_font = font.Font(family=base_family, size=-header_px, weight='bold')
+            
+        # Use Liberation Sans for headers since we know it exists
+        try:
+            self.header_font = font.Font(family="Liberation Sans", size=-header_px, weight='bold')
+            print(f"Header font created: {self.header_font.actual()}")
+        except:
+            # Fallback to system default
+            base_family = font.nametofont('TkDefaultFont').cget('family')
+            self.header_font = font.Font(family=base_family, size=-header_px, weight='bold')
+            print(f"Header font fallback: {self.header_font.actual()}")
 
         self.iso_path = tk.StringVar()
         self.target_device = tk.StringVar()
@@ -83,13 +90,17 @@ class WoeUSBtkinter(tk.Tk):
     def increase_font(self):
         '''Make the font 2 points bigger'''
         print('making font bigger')
-        size = self.customFont['size']
-        self.customFont.configure(size=size+2)
+        current_size = self.customFont.cget('size')
+        new_size = current_size + 2
+        self.customFont.configure(size=new_size)
+        print(f"Font size changed from {current_size} to {new_size}")
 
     def decrease_font(self):
         '''Make the font 2 points smaller'''
-        size = self.customFont['size']
-        self.customFont.configure(size=size-2)
+        current_size = self.customFont.cget('size')
+        new_size = current_size - 2
+        self.customFont.configure(size=new_size)
+        print(f"Font size changed from {current_size} to {new_size}")
 
     def _create_widgets(self):
         main_frame = ttk.Frame(self, padding="10")
@@ -97,7 +108,16 @@ class WoeUSBtkinter(tk.Tk):
         
         # Create buttonframe as a child of main_frame
         buttonframe = tk.Frame(main_frame)
-        self.customFont = tk.font.Font(family="Helvetica", size=50)
+        
+        # Use a font that definitely exists on Linux, with fallback
+        try:
+            self.customFont = tk.font.Font(family="Liberation Sans", size=50)
+            print(f"Using font: {self.customFont.actual()}")
+        except:
+            # Fallback to system default
+            self.customFont = tk.font.Font(size=50)
+            print(f"Fallback font: {self.customFont.actual()}")
+            
         label = tk.Label(main_frame, text="Hello, world", font=self.customFont)
         text = tk.Text(main_frame, width=20, height=2, font=self.customFont)
 
