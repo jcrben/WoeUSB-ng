@@ -23,6 +23,9 @@ This project rewrite of original [WoeUSB](https://github.com/slacka/WoeUSB)
 
 ## Installation
 
+BENS NOTE:
+* see `initialize_default_distrobox.bash` in my dotfiles for how I build/install/run this
+
 ### Arch
 ```shell
 yay -S woeusb-ng
